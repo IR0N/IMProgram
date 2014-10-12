@@ -7,6 +7,8 @@ import javax.swing.*;
  */
 public class MainGui extends JFrame{
     public MainGui(){
-        
+        LoginDialog logIn = new LoginDialog(this, true);
+        logIn.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        logIn.setVisible(true);
     }
 }
