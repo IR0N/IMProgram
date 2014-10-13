@@ -6,12 +6,14 @@
 
 package improgram;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Joseph Ahrens
  */
 public class RegisterDialog extends javax.swing.JDialog {
-    boolean registerButtonClicked;
+    boolean registerButtonClicked, cancelButtonClicked;
     /**
      * Creates new form RegisterDialog
      */
@@ -72,6 +74,11 @@ public class RegisterDialog extends javax.swing.JDialog {
 
         cancelButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -131,8 +138,13 @@ public class RegisterDialog extends javax.swing.JDialog {
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
         registerButtonClicked = true;
         setVisible(false);
-        
+        JOptionPane.showMessageDialog(this, "You registered an account.");
     }//GEN-LAST:event_registerButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        cancelButtonClicked = true;
+        setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
      * @param args the command line arguments
