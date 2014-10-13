@@ -7,8 +7,24 @@ import javax.swing.*;
  */
 public class MainGui extends JFrame{
     public MainGui(){
-        LoginDialog logIn = new LoginDialog(this, true);
-        logIn.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        logIn.setVisible(true);
+        LoginDialog logInDialog = new LoginDialog(this, true);
+        logInDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        
+        RegisterDialog registerDialog = new RegisterDialog(this, true);
+        registerDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        
+        logInDialog.setVisible(true);
+        
+        while(true){
+            if(logInDialog.registerButtonClicked){
+                registerDialog.setVisible(true);
+                logInDialog.registerButtonClicked = false;
+            }
+            if(registerDialog.registerButtonClicked){
+                logInDialog.setVisible(true);
+                registerDialog.registerButtonClicked = false;
+            }
+        }
     }
+    
 }
