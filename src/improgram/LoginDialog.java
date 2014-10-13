@@ -2,13 +2,14 @@ package improgram;
 
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Joseph Ahrens
  */
 public class LoginDialog extends javax.swing.JDialog {
 
-    boolean registerButtonClicked;
+    boolean registerButtonClicked, logInButtonClicked;
     /**
      * Creates new form LoginDialog
      */
@@ -33,6 +34,7 @@ public class LoginDialog extends javax.swing.JDialog {
         logInButton = new javax.swing.JButton();
         registerButton = new javax.swing.JButton();
         passwordField = new javax.swing.JPasswordField();
+        closeButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Log In - Instant Messaging Program");
@@ -52,6 +54,11 @@ public class LoginDialog extends javax.swing.JDialog {
 
         logInButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         logInButton.setText("Log In");
+        logInButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logInButtonActionPerformed(evt);
+            }
+        });
 
         registerButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         registerButton.setText("Register");
@@ -64,6 +71,14 @@ public class LoginDialog extends javax.swing.JDialog {
         passwordField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         passwordField.setText("jPasswordField1");
         passwordField.setName(""); // NOI18N
+
+        closeButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        closeButton.setText("Close");
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -79,7 +94,9 @@ public class LoginDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(usernameLabel)
                             .addComponent(logInButton))
-                        .addGap(105, 105, 105)
+                        .addGap(18, 18, 18)
+                        .addComponent(closeButton)
+                        .addGap(14, 14, 14)
                         .addComponent(registerButton))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(109, 109, 109)
@@ -88,7 +105,7 @@ public class LoginDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(106, Short.MAX_VALUE))
+                .addContainerGap(104, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,7 +123,8 @@ public class LoginDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(logInButton)
-                    .addComponent(registerButton))
+                    .addComponent(registerButton)
+                    .addComponent(closeButton))
                 .addContainerGap())
         );
 
@@ -118,7 +136,18 @@ public class LoginDialog extends javax.swing.JDialog {
         setVisible(false);
     }//GEN-LAST:event_registerButtonActionPerformed
 
+    private void logInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logInButtonActionPerformed
+        JOptionPane.showMessageDialog(this, "You logged in.");
+        logInButtonClicked = true;
+        setVisible(false);
+    }//GEN-LAST:event_logInButtonActionPerformed
+
+    private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_closeButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton closeButton;
     private javax.swing.JButton logInButton;
     private javax.swing.JLabel logInLabel;
     private javax.swing.JPasswordField passwordField;
