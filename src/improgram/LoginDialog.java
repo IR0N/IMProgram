@@ -1,12 +1,14 @@
 package improgram;
 
 import java.awt.*;
+import java.awt.event.*;
 /**
  *
  * @author Joseph Ahrens
  */
 public class LoginDialog extends javax.swing.JDialog {
 
+    boolean registerButtonClicked;
     /**
      * Creates new form LoginDialog
      */
@@ -33,6 +35,7 @@ public class LoginDialog extends javax.swing.JDialog {
         passwordField = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Log In - Instant Messaging Program");
 
         logInLabel.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         logInLabel.setText("Log In");
@@ -52,6 +55,11 @@ public class LoginDialog extends javax.swing.JDialog {
 
         registerButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         registerButton.setText("Register");
+        registerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                registerButtonActionPerformed(evt);
+            }
+        });
 
         passwordField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         passwordField.setText("jPasswordField1");
@@ -105,6 +113,11 @@ public class LoginDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
+        registerButtonClicked = true;
+        setVisible(false);
+    }//GEN-LAST:event_registerButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton logInButton;
     private javax.swing.JLabel logInLabel;
@@ -114,4 +127,6 @@ public class LoginDialog extends javax.swing.JDialog {
     private javax.swing.JTextField usernameField;
     private javax.swing.JLabel usernameLabel;
     // End of variables declaration//GEN-END:variables
+
 }
+
