@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
  */
 public class RegisterDialog extends javax.swing.JDialog {
     boolean registerButtonClicked, cancelButtonClicked;
+    ServerCommunicator server = new ServerCommunicator();
     /**
      * Creates new form RegisterDialog
      */
@@ -55,14 +56,14 @@ public class RegisterDialog extends javax.swing.JDialog {
         confirmPasswordLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         confirmPasswordLabel.setText("Confirm Password:");
 
+        usernameField.setColumns(15);
         usernameField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        usernameField.setText("Enter  username");
 
+        passwordField.setColumns(15);
         passwordField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        passwordField.setText("jPasswordField1");
 
+        confirmPasswordField.setColumns(15);
         confirmPasswordField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        confirmPasswordField.setText("jPasswordField2");
 
         registerButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         registerButton.setText("Register");
@@ -106,7 +107,7 @@ public class RegisterDialog extends javax.swing.JDialog {
                                     .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(confirmPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(82, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,9 +137,25 @@ public class RegisterDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
-        registerButtonClicked = true;
-        setVisible(false);
-        JOptionPane.showMessageDialog(this, "You registered an account.");
+        String password = new String(passwordField.getPassword());
+        String confirmPassword = new String(confirmPasswordField.getPassword());
+        if(password.equals(confirmPassword)){
+            int response = server.register(usernameField.getText(), password);
+            if(response == 100){
+                JOptionPane.showMessageDialog(rootPane, "Error " + response + " - A user with that name already exists.");
+            }
+            else if(response == 101){
+                JOptionPane.showMessageDialog(rootPane, "Successfully added " + usernameField.getText() + " to the user list.");
+                registerButtonClicked = true;
+                setVisible(false);
+            }
+            else{
+                JOptionPane.showMessageDialog(rootPane, "Did not get a response from the server.");
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "The passwords did not match, please try again.");
+        }
     }//GEN-LAST:event_registerButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
