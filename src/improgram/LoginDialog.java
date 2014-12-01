@@ -2,6 +2,9 @@ package improgram;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 /**
  *
@@ -10,6 +13,7 @@ import javax.swing.JOptionPane;
 public class LoginDialog extends javax.swing.JDialog {
 
     boolean registerButtonClicked, logInButtonClicked;
+    ServerCommunicator server = new ServerCommunicator();
     /**
      * Creates new form LoginDialog
      */
@@ -49,8 +53,8 @@ public class LoginDialog extends javax.swing.JDialog {
         passwordLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         passwordLabel.setText("Password:");
 
+        usernameField.setColumns(15);
         usernameField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        usernameField.setText("Enter your username");
 
         logInButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         logInButton.setText("Log In");
@@ -68,8 +72,8 @@ public class LoginDialog extends javax.swing.JDialog {
             }
         });
 
+        passwordField.setColumns(15);
         passwordField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        passwordField.setText("jPasswordField1");
         passwordField.setName(""); // NOI18N
 
         closeButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -105,7 +109,7 @@ public class LoginDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(104, Short.MAX_VALUE))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -137,9 +141,33 @@ public class LoginDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_registerButtonActionPerformed
 
     private void logInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logInButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "You logged in.");
-        logInButtonClicked = true;
-        setVisible(false);
+        String password = new String(passwordField.getPassword());
+        int response = server.logIn(usernameField.getText(), password);
+        if(response == 102){
+            JOptionPane.showMessageDialog(rootPane, "Error " + response + " - " + usernameField.getText() + " is already logged in.");
+        }
+        else if(response == 103){
+            int response2 = server.sendIP(usernameField.getText());
+            if(response2 == 110){
+                JOptionPane.showMessageDialog(rootPane, usernameField.getText() + " successfully logged in.");
+                server.setCurrentUser(usernameField.getText());
+                logInButtonClicked = true;
+                setVisible(false);
+                server.getBuddyList(usernameField.getText());
+            }
+            else{
+                JOptionPane.showMessageDialog(rootPane, "Couldn't send IP Address successfully.");
+            }
+        }
+        else if(response == 108){
+            JOptionPane.showMessageDialog(rootPane, "The username " + usernameField.getText() + " does not exist.");
+        }
+        else if(response == 109){
+            JOptionPane.showMessageDialog(rootPane, "The passwords did not match.");
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Error: Did not recieve error/message code.");
+        }
     }//GEN-LAST:event_logInButtonActionPerformed
 
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
