@@ -6,6 +6,7 @@
 
 package improgram;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
 /**
@@ -14,6 +15,8 @@ import javax.swing.JOptionPane;
  */
 public class EditBuddyListDialog extends javax.swing.JDialog {
     boolean backButtonClicked;
+    ServerCommunicator server = new ServerCommunicator();
+    DefaultComboBoxModel box;
     /**
      * Creates new form EditBuddyListDialog
      */
@@ -40,6 +43,7 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
         removeBuddyButton = new javax.swing.JButton();
         closeButton = new javax.swing.JButton();
         backButton = new javax.swing.JButton();
+        refreshButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -52,11 +56,14 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
         chooseBuddyLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         chooseBuddyLabel.setText("Choose Buddy:");
 
+        enterBuddyNameField.setColumns(12);
         enterBuddyNameField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        enterBuddyNameField.setText("Enter Buddy Name");
 
+        box = new DefaultComboBoxModel();
+        updateChooseBuddyComboBox();
         chooseBuddyComboBox.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chooseBuddyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        updateChooseBuddyComboBox();
+        chooseBuddyComboBox.setModel(box);
 
         addBuddyButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         addBuddyButton.setText("Add Buddy");
@@ -90,6 +97,13 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
             }
         });
 
+        refreshButton.setText("Refresh");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -102,10 +116,10 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
                             .addComponent(chooseBuddyLabel)
                             .addComponent(enterBuddyNameLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(chooseBuddyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 112, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(removeBuddyButton))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(enterBuddyNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -118,8 +132,12 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
                                 .addComponent(backButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(closeButton))
-                            .addComponent(editBuddyListLabel))))
-                .addGap(90, 90, 90))
+                            .addComponent(editBuddyListLabel)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(refreshButton)
+                        .addGap(258, 258, 258)))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,7 +154,9 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
                     .addComponent(chooseBuddyLabel)
                     .addComponent(chooseBuddyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(removeBuddyButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(refreshButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(closeButton)
                     .addComponent(backButton))
@@ -147,7 +167,25 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addBuddyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBuddyButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "The system will look for a buddy with the name that was entered in the username field and add it if it exists, and tell the user if it was successfully added or not.");
+        int response = server.addBuddy(server.getCurrentUser(), enterBuddyNameField.getText());
+        if(response == 106){
+            server.buddies.add(enterBuddyNameField.getText());
+            JOptionPane.showMessageDialog(rootPane, "Added " + enterBuddyNameField.getText() + " to the buddy list.");
+            updateChooseBuddyComboBox();
+            
+        }
+        else if(response == 111){
+            JOptionPane.showMessageDialog(rootPane, "Error " + response + " - Could not add " + enterBuddyNameField.getText() + " to buddy list.");
+        }
+        else if(response == 112){
+            JOptionPane.showMessageDialog(rootPane, "Error " + response + " - " + enterBuddyNameField.getText() + " does not exist.");
+        }
+        else if(response == 113){
+            JOptionPane.showMessageDialog(rootPane, "Error " + response + " - Can't add yourself to your buddy list!");
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Did not recieve error/message code.");
+        }
     }//GEN-LAST:event_addBuddyButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
@@ -156,13 +194,35 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_backButtonActionPerformed
 
     private void removeBuddyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeBuddyButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "The system will tell the user if the buddy was successfully removed from the user's buddy list.");
+        int response = server.removeBuddy(server.getCurrentUser(), enterBuddyNameField.getText());
+        if(response == 107){
+            server.buddies.remove(enterBuddyNameField.getText());
+            JOptionPane.showMessageDialog(rootPane, "Removed " + enterBuddyNameField.getText() + " from the buddy list.");
+            updateChooseBuddyComboBox();
+        }
+        else if(response == 112){
+            JOptionPane.showMessageDialog(rootPane, "Error " + response + " - Could not remove " + enterBuddyNameField.getText() + " from buddy list.");
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Did not recieve error/message code.");
+        }
     }//GEN-LAST:event_removeBuddyButtonActionPerformed
 
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
         System.exit(0);
     }//GEN-LAST:event_closeButtonActionPerformed
 
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+        updateChooseBuddyComboBox();
+    }//GEN-LAST:event_refreshButtonActionPerformed
+    
+    public void updateChooseBuddyComboBox(){
+        box.removeAllElements();
+        for(int i = 0; i < server.buddies.size(); i++){
+            box.addElement(server.buddies.get(i));
+            System.out.println("Added " + server.buddies.get(i) + " to the list / box.");
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBuddyButton;
@@ -173,6 +233,7 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
     private javax.swing.JLabel editBuddyListLabel;
     private javax.swing.JTextField enterBuddyNameField;
     private javax.swing.JLabel enterBuddyNameLabel;
+    private javax.swing.JButton refreshButton;
     private javax.swing.JButton removeBuddyButton;
     // End of variables declaration//GEN-END:variables
 }
