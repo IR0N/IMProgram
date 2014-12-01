@@ -168,7 +168,7 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
 
     private void addBuddyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBuddyButtonActionPerformed
         int response = server.addBuddy(server.getCurrentUser(), enterBuddyNameField.getText());
-        if(response == 106){
+        if(response == 106){ 
             server.buddies.add(enterBuddyNameField.getText());
             JOptionPane.showMessageDialog(rootPane, "Added " + enterBuddyNameField.getText() + " to the buddy list.");
             updateChooseBuddyComboBox();
