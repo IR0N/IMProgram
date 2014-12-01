@@ -6,6 +6,7 @@
 
 package improgram;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 /**
@@ -14,6 +15,9 @@ import javax.swing.JOptionPane;
  */
 public class MainWindowDialog extends javax.swing.JDialog {
     boolean editBuddyListMenuItemClicked, messagesMenuItemClicked, logOutButtonClicked;
+    ServerCommunicator server = new ServerCommunicator();
+    DefaultListModel list = new DefaultListModel();
+    
     /**
      * Creates new form MainWindowDialog
      */
@@ -21,7 +25,7 @@ public class MainWindowDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -31,27 +35,23 @@ public class MainWindowDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buddiesOnlineLabel = new javax.swing.JLabel();
-        unreadMessagesLabel = new javax.swing.JLabel();
-        buddiesOnlineComboBox = new javax.swing.JComboBox();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jEditorPane1 = new javax.swing.JEditorPane();
         logOutButton = new javax.swing.JButton();
         closeButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        buddyList = new javax.swing.JList();
+        buddyListLabel = new javax.swing.JLabel();
+        refreshButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         buddiesMenu = new javax.swing.JMenu();
         editBuddyListMenuItem = new javax.swing.JMenuItem();
         messagesMenu = new javax.swing.JMenu();
         messagesMenuItem = new javax.swing.JMenuItem();
 
+        jScrollPane2.setViewportView(jEditorPane1);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        buddiesOnlineLabel.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        buddiesOnlineLabel.setText("Buddies Online:");
-
-        unreadMessagesLabel.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        unreadMessagesLabel.setText("Unread Messages:");
-
-        buddiesOnlineComboBox.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        buddiesOnlineComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         logOutButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         logOutButton.setText("Log Out");
@@ -62,10 +62,25 @@ public class MainWindowDialog extends javax.swing.JDialog {
         });
 
         closeButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        closeButton.setText("Close");
+        closeButton.setText("Close Program");
         closeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 closeButtonActionPerformed(evt);
+            }
+        });
+
+        updateChooseBuddyComboBox();
+        buddyList.setModel(list);
+        jScrollPane1.setViewportView(buddyList);
+
+        buddyListLabel.setFont(new java.awt.Font("Dialog", 0, 36)); // NOI18N
+        buddyListLabel.setText("Buddies");
+
+        refreshButton.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        refreshButton.setText("Refresh");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
             }
         });
 
@@ -100,40 +115,42 @@ public class MainWindowDialog extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(unreadMessagesLabel)
-                    .addComponent(buddiesOnlineLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(buddiesOnlineComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 148, Short.MAX_VALUE)
-                        .addComponent(logOutButton))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(closeButton)
-                        .addGap(9, 9, 9)))
-                .addGap(57, 57, 57))
+                        .addGap(154, 154, 154)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(logOutButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(refreshButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(closeButton))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(274, 274, 274)
+                        .addComponent(buddyListLabel)))
+                .addContainerGap(162, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(69, 69, 69)
+                .addContainerGap()
+                .addComponent(buddyListLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(buddiesOnlineLabel)
-                    .addComponent(buddiesOnlineComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logOutButton))
-                .addGap(70, 70, 70)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(unreadMessagesLabel)
-                    .addComponent(closeButton))
-                .addContainerGap(121, Short.MAX_VALUE))
+                    .addComponent(logOutButton)
+                    .addComponent(closeButton)
+                    .addComponent(refreshButton))
+                .addGap(55, 55, 55))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    
+    
     private void editBuddyListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBuddyListMenuItemActionPerformed
         editBuddyListMenuItemClicked = true;
         setVisible(false);
@@ -145,27 +162,52 @@ public class MainWindowDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_messagesMenuItemActionPerformed
 
     private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "You logged out.");
-        setVisible(false);
-        logOutButtonClicked = true;
+        int response = server.logOut(server.getCurrentUser());
+        if(response == 104){
+            JOptionPane.showMessageDialog(rootPane, "You have logged out.");
+            logOutButtonClicked = true;
+            setVisible(false);
+        }
+        else if(response == 105){
+            JOptionPane.showMessageDialog(rootPane, server.getCurrentUser() + " is already logged out.");
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Error - Did not recieve error/message code.");
+        }
+        
+        
     }//GEN-LAST:event_logOutButtonActionPerformed
 
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
         System.exit(0);
     }//GEN-LAST:event_closeButtonActionPerformed
 
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+        updateChooseBuddyComboBox();
+    }//GEN-LAST:event_refreshButtonActionPerformed
+    
+    public void updateChooseBuddyComboBox(){
+        list.clear();
+        for(int i = 0; i < server.buddies.size(); i++){
+            list.addElement(server.buddies.get(i));
+            System.out.println("Added " + server.buddies.get(i) + " to the list / box.");
+        }
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu buddiesMenu;
-    private javax.swing.JComboBox buddiesOnlineComboBox;
-    private javax.swing.JLabel buddiesOnlineLabel;
+    private javax.swing.JList buddyList;
+    private javax.swing.JLabel buddyListLabel;
     private javax.swing.JButton closeButton;
     private javax.swing.JMenuItem editBuddyListMenuItem;
+    private javax.swing.JEditorPane jEditorPane1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton logOutButton;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu messagesMenu;
     private javax.swing.JMenuItem messagesMenuItem;
-    private javax.swing.JLabel unreadMessagesLabel;
+    private javax.swing.JButton refreshButton;
     // End of variables declaration//GEN-END:variables
 }
