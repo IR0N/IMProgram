@@ -6,6 +6,7 @@
 
 package improgram;
 
+import java.awt.Frame;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
@@ -14,16 +15,18 @@ import javax.swing.JOptionPane;
  * @author Joseph Ahrens
  */
 public class MainWindowDialog extends javax.swing.JDialog {
-    boolean editBuddyListMenuItemClicked, messagesMenuItemClicked, logOutButtonClicked;
-    ServerCommunicator server = new ServerCommunicator();
+    ServerCommunicator server;
+    Frame parent;
     DefaultListModel list = new DefaultListModel();
     
     /**
      * Creates new form MainWindowDialog
      */
-    public MainWindowDialog(java.awt.Frame parent, boolean modal) {
+    public MainWindowDialog(java.awt.Frame parent, boolean modal, ServerCommunicator server) {
         super(parent, modal);
         initComponents();
+        this.server = server;
+        this.parent = parent;
     }
     
     /**
@@ -146,27 +149,37 @@ public class MainWindowDialog extends javax.swing.JDialog {
                 .addGap(55, 55, 55))
         );
 
+        getAccessibleContext().setAccessibleName("Main Window - Instant Messaging Program");
+        getAccessibleContext().setAccessibleDescription("");
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
     
     
     private void editBuddyListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBuddyListMenuItemActionPerformed
-        editBuddyListMenuItemClicked = true;
         setVisible(false);
+        EditBuddyListDialog editBuddies = new EditBuddyListDialog(parent, true, server);
+        editBuddies.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        editBuddies.setVisible(true);
     }//GEN-LAST:event_editBuddyListMenuItemActionPerformed
 
     private void messagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_messagesMenuItemActionPerformed
-        messagesMenuItemClicked = true;
         setVisible(false);
+        MessagesDialog messagesDialog = new MessagesDialog(parent, true, server);
+        messagesDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        messagesDialog.setVisible(true);
     }//GEN-LAST:event_messagesMenuItemActionPerformed
 
     private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutButtonActionPerformed
         int response = server.logOut(server.getCurrentUser());
         if(response == 104){
             JOptionPane.showMessageDialog(rootPane, "You have logged out.");
-            logOutButtonClicked = true;
             setVisible(false);
+            server.clearInfo();
+            LoginDialog logInDialog = new LoginDialog(parent, true, server);
+            logInDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+            logInDialog.setVisible(true);
         }
         else if(response == 105){
             JOptionPane.showMessageDialog(rootPane, server.getCurrentUser() + " is already logged out.");
@@ -179,7 +192,19 @@ public class MainWindowDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_logOutButtonActionPerformed
 
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
-        System.exit(0);
+        int response = server.logOut(server.getCurrentUser());
+        if(response == 104){
+            JOptionPane.showMessageDialog(rootPane, "Logged out. Closing program...");
+            server.clearInfo();
+            System.exit(0);
+        }
+        else if(response == 105){
+            JOptionPane.showMessageDialog(rootPane, server.getCurrentUser() + " is already logged out.");
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Error - Could not log out.");
+        }
+        
     }//GEN-LAST:event_closeButtonActionPerformed
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
