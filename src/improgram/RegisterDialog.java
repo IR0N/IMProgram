@@ -6,6 +6,7 @@
 
 package improgram;
 
+import java.awt.Frame;
 import javax.swing.JOptionPane;
 
 /**
@@ -13,14 +14,16 @@ import javax.swing.JOptionPane;
  * @author Joseph Ahrens
  */
 public class RegisterDialog extends javax.swing.JDialog {
-    boolean registerButtonClicked, cancelButtonClicked;
-    ServerCommunicator server = new ServerCommunicator();
+    Frame parent;
+    ServerCommunicator server;
     /**
      * Creates new form RegisterDialog
      */
-    public RegisterDialog(java.awt.Frame parent, boolean modal) {
+    public RegisterDialog(java.awt.Frame parent, boolean modal, ServerCommunicator server) {
         super(parent, modal);
         initComponents();
+        this.parent = parent;
+        this.server = server;
     }
 
     /**
@@ -133,6 +136,8 @@ public class RegisterDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
+        getAccessibleContext().setAccessibleName("Register - Instant Messaging Program");
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -146,8 +151,10 @@ public class RegisterDialog extends javax.swing.JDialog {
             }
             else if(response == 101){
                 JOptionPane.showMessageDialog(rootPane, "Successfully added " + usernameField.getText() + " to the user list.");
-                registerButtonClicked = true;
                 setVisible(false);
+                LoginDialog logInDialog = new LoginDialog(parent, true, server);
+                logInDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+                logInDialog.setVisible(true);
             }
             else{
                 JOptionPane.showMessageDialog(rootPane, "Did not get a response from the server.");
@@ -159,8 +166,10 @@ public class RegisterDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_registerButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        cancelButtonClicked = true;
         setVisible(false);
+        LoginDialog logInDialog = new LoginDialog(parent, true, server);
+        logInDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        logInDialog.setVisible(true);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
