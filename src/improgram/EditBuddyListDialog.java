@@ -6,6 +6,7 @@
 
 package improgram;
 
+import java.awt.Frame;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
@@ -14,15 +15,17 @@ import javax.swing.JOptionPane;
  * @author Joseph Ahrens
  */
 public class EditBuddyListDialog extends javax.swing.JDialog {
-    boolean backButtonClicked;
-    ServerCommunicator server = new ServerCommunicator();
+    ServerCommunicator server;
+    Frame parent;
     DefaultComboBoxModel box;
     /**
      * Creates new form EditBuddyListDialog
      */
-    public EditBuddyListDialog(java.awt.Frame parent, boolean modal) {
+    public EditBuddyListDialog(java.awt.Frame parent, boolean modal, ServerCommunicator server) {
         super(parent, modal);
         initComponents();
+        this.parent = parent;
+        this.server = server;
     }
 
     /**
@@ -41,7 +44,6 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
         chooseBuddyComboBox = new javax.swing.JComboBox();
         addBuddyButton = new javax.swing.JButton();
         removeBuddyButton = new javax.swing.JButton();
-        closeButton = new javax.swing.JButton();
         backButton = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
 
@@ -78,14 +80,6 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
         removeBuddyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeBuddyButtonActionPerformed(evt);
-            }
-        });
-
-        closeButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        closeButton.setText("Close");
-        closeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                closeButtonActionPerformed(evt);
             }
         });
 
@@ -126,17 +120,14 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
                                 .addGap(70, 70, 70)
                                 .addComponent(addBuddyButton))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(207, 207, 207)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(backButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(closeButton))
-                            .addComponent(editBuddyListLabel)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(refreshButton)
-                        .addGap(258, 258, 258)))
+                        .addGap(255, 255, 255)
+                        .addComponent(editBuddyListLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(277, 277, 277)
+                        .addComponent(backButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(201, 201, 201)
+                        .addComponent(refreshButton)))
                 .addContainerGap(79, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -157,11 +148,11 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(refreshButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(closeButton)
-                    .addComponent(backButton))
+                .addComponent(backButton)
                 .addContainerGap())
         );
+
+        getAccessibleContext().setAccessibleName("Edit Buddy List - Instant Messaging Program");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -189,28 +180,27 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_addBuddyButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        backButtonClicked = true;
         setVisible(false);
+        MainWindowDialog mainWindow = new MainWindowDialog(parent, true, server);
+        mainWindow.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        mainWindow.setVisible(true);
     }//GEN-LAST:event_backButtonActionPerformed
 
     private void removeBuddyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeBuddyButtonActionPerformed
-        int response = server.removeBuddy(server.getCurrentUser(), enterBuddyNameField.getText());
+        String buddy = chooseBuddyComboBox.getSelectedItem().toString();
+        int response = server.removeBuddy(server.getCurrentUser(), buddy);
         if(response == 107){
-            server.buddies.remove(enterBuddyNameField.getText());
-            JOptionPane.showMessageDialog(rootPane, "Removed " + enterBuddyNameField.getText() + " from the buddy list.");
+            server.buddies.remove(buddy);
+            JOptionPane.showMessageDialog(rootPane, "Removed " + buddy + " from the buddy list.");
             updateChooseBuddyComboBox();
         }
         else if(response == 112){
-            JOptionPane.showMessageDialog(rootPane, "Error " + response + " - Could not remove " + enterBuddyNameField.getText() + " from buddy list.");
+            JOptionPane.showMessageDialog(rootPane, "Error " + response + " - Could not remove " + buddy + " from buddy list.");
         }
         else{
             JOptionPane.showMessageDialog(rootPane, "Did not recieve error/message code.");
         }
     }//GEN-LAST:event_removeBuddyButtonActionPerformed
-
-    private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_closeButtonActionPerformed
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
         updateChooseBuddyComboBox();
@@ -229,7 +219,6 @@ public class EditBuddyListDialog extends javax.swing.JDialog {
     private javax.swing.JButton backButton;
     private javax.swing.JComboBox chooseBuddyComboBox;
     private javax.swing.JLabel chooseBuddyLabel;
-    private javax.swing.JButton closeButton;
     private javax.swing.JLabel editBuddyListLabel;
     private javax.swing.JTextField enterBuddyNameField;
     private javax.swing.JLabel enterBuddyNameLabel;
