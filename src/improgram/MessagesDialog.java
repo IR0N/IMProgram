@@ -6,6 +6,8 @@
 
 package improgram;
 
+import java.awt.Frame;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
 /**
@@ -13,13 +15,17 @@ import javax.swing.JOptionPane;
  * @author Joseph Ahrens
  */
 public class MessagesDialog extends javax.swing.JDialog {
-    boolean backButtonClicked;
+    ServerCommunicator server;
+    Frame parent;
+    DefaultComboBoxModel box;
     /**
      * Creates new form MessagesDialog
      */
-    public MessagesDialog(java.awt.Frame parent, boolean modal) {
+    public MessagesDialog(java.awt.Frame parent, boolean modal, ServerCommunicator server) {
         super(parent, modal);
         initComponents();
+        this.parent = parent;
+        this.server = server;
     }
 
     /**
@@ -43,7 +49,6 @@ public class MessagesDialog extends javax.swing.JDialog {
         buddyLabel2 = new javax.swing.JLabel();
         buddyComboBox2 = new javax.swing.JComboBox();
         sendMessageButton = new javax.swing.JButton();
-        closeButton = new javax.swing.JButton();
         backButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -56,8 +61,11 @@ public class MessagesDialog extends javax.swing.JDialog {
         buddyLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         buddyLabel.setText("Buddy");
 
+        box = new DefaultComboBoxModel();
+        updateBuddyComboBox();
         buddyComboBox.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        buddyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        updateBuddyComboBox();
+        buddyComboBox.setModel(box);
 
         selectedBuddysCheckBox.setText("Show selected buddy's messages only");
 
@@ -74,22 +82,17 @@ public class MessagesDialog extends javax.swing.JDialog {
         buddyLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         buddyLabel2.setText("Buddy");
 
+        box = new DefaultComboBoxModel();
+        updateBuddyComboBox();
         buddyComboBox2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        buddyComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        updateBuddyComboBox();
+        buddyComboBox2.setModel(box);
 
         sendMessageButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         sendMessageButton.setText("Send Message");
         sendMessageButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sendMessageButtonActionPerformed(evt);
-            }
-        });
-
-        closeButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        closeButton.setText("Close");
-        closeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                closeButtonActionPerformed(evt);
             }
         });
 
@@ -115,7 +118,7 @@ public class MessagesDialog extends javax.swing.JDialog {
                                 .addComponent(buddyLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(buddyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
@@ -127,10 +130,8 @@ public class MessagesDialog extends javax.swing.JDialog {
                         .addGap(23, 23, 23))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(selectedBuddysCheckBox)
-                        .addGap(58, 58, 58)
+                        .addGap(78, 78, 78)
                         .addComponent(backButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(closeButton)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(102, 102, 102)
@@ -160,35 +161,39 @@ public class MessagesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(selectedBuddysCheckBox)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(closeButton)
-                        .addComponent(backButton)))
+                    .addComponent(backButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        getAccessibleContext().setAccessibleName("Messaging - Instant Messaging Program");
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_closeButtonActionPerformed
 
     private void sendMessageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendMessageButtonActionPerformed
         JOptionPane.showMessageDialog(this, "A message would be sent to the selected buddy.");
     }//GEN-LAST:event_sendMessageButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        backButtonClicked = true;
         setVisible(false);
+        MainWindowDialog mainWindow = new MainWindowDialog(parent, true, server);
+        mainWindow.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        mainWindow.setVisible(true);
     }//GEN-LAST:event_backButtonActionPerformed
 
+    public void updateBuddyComboBox(){
+        box.removeAllElements();
+        for(int i = 0; i < server.buddies.size(); i++){
+            box.addElement(server.buddies.get(i));
+            System.out.println("Added " + server.buddies.get(i) + " to the list / box.");
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;
     private javax.swing.JComboBox buddyComboBox;
     private javax.swing.JComboBox buddyComboBox2;
     private javax.swing.JLabel buddyLabel;
     private javax.swing.JLabel buddyLabel2;
-    private javax.swing.JButton closeButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
