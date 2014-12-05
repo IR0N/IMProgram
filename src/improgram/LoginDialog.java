@@ -11,15 +11,16 @@ import javax.swing.JOptionPane;
  * @author Joseph Ahrens
  */
 public class LoginDialog extends javax.swing.JDialog {
-
-    boolean registerButtonClicked, logInButtonClicked;
-    ServerCommunicator server = new ServerCommunicator();
+    Frame parent;
+    ServerCommunicator server;
     /**
      * Creates new form LoginDialog
      */
-    public LoginDialog(Frame parent, boolean modal) {
+    public LoginDialog(Frame parent, boolean modal, ServerCommunicator server) {
         super(parent, modal);
         initComponents();
+        this.parent = parent;
+        this.server = server;
     }
 
     /**
@@ -42,9 +43,12 @@ public class LoginDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Log In - Instant Messaging Program");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setFocusCycleRoot(false);
 
-        logInLabel.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        logInLabel.setFont(new java.awt.Font("Courier New", 1, 24)); // NOI18N
         logInLabel.setText("Log In");
+        logInLabel.setToolTipText("Log in by typing in a username and password in the respective textfields.");
         logInLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         usernameLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -124,7 +128,7 @@ public class LoginDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(passwordLabel)
                     .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(logInButton)
                     .addComponent(registerButton)
@@ -136,8 +140,12 @@ public class LoginDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
-        registerButtonClicked = true;
+        //registerButtonClicked = true;
         setVisible(false);
+        
+        RegisterDialog registerDialog = new RegisterDialog(parent, true, server);
+        registerDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        registerDialog.setVisible(true);
     }//GEN-LAST:event_registerButtonActionPerformed
 
     private void logInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logInButtonActionPerformed
@@ -151,9 +159,11 @@ public class LoginDialog extends javax.swing.JDialog {
             if(response2 == 110){
                 JOptionPane.showMessageDialog(rootPane, usernameField.getText() + " successfully logged in.");
                 server.setCurrentUser(usernameField.getText());
-                logInButtonClicked = true;
-                setVisible(false);
                 server.getBuddyList(usernameField.getText());
+                setVisible(false);
+                MainWindowDialog mainWindow = new MainWindowDialog(parent, true, server);
+                mainWindow.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+                mainWindow.setVisible(true);
             }
             else{
                 JOptionPane.showMessageDialog(rootPane, "Couldn't send IP Address successfully.");
