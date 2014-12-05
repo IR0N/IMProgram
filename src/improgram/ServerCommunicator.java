@@ -255,4 +255,8 @@ public class ServerCommunicator {
             Logger.getLogger(ServerCommunicator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public void clearInfo(){
+        currentUser = "no one";
+        buddies.clear();
+    }
 }
