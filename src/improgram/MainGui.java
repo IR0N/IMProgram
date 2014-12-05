@@ -7,10 +7,12 @@ import javax.swing.*;
  */
 public class MainGui extends JFrame{
     public MainGui(){
-        LoginDialog logInDialog = new LoginDialog(this, true);
+        ServerCommunicator server = new ServerCommunicator();
+        
+        LoginDialog logInDialog = new LoginDialog(this, true, server);
         logInDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         
-        RegisterDialog registerDialog = new RegisterDialog(this, true);
+        /*registerDialog = new RegisterDialog(this, true);
         registerDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         
         MainWindowDialog mainDialog = new MainWindowDialog(this, true);
@@ -20,11 +22,11 @@ public class MainGui extends JFrame{
         editBuddyListDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         
         MessagesDialog messagesDialog = new MessagesDialog(this, true);
-        messagesDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        messagesDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);*/
         
         logInDialog.setVisible(true);
         
-        while(true){
+        /*while(true){
             if(logInDialog.registerButtonClicked){
                 registerDialog.setVisible(true);
                 logInDialog.registerButtonClicked = false;
@@ -59,7 +61,7 @@ public class MainGui extends JFrame{
                 messagesDialog.backButtonClicked = false;
             }
             
-        }
+        }*/
     }
     
 }
